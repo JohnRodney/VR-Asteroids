@@ -2,6 +2,7 @@ Game = {};
 Game.loaded = false;
 
 Template.scene.onRendered(function (){
+  newGame();
   SceneManager.init();
   loadMeteor();
   addStarField();
@@ -11,9 +12,19 @@ Template.scene.onRendered(function (){
   addMeteors();
 });
 
+function newGame() {
+  Game.playerLives = 3;
+  Game.playerScore = 0;
+  Game.asteroidTimer = 8000;
+  Game.inProgress = true;
+}
+
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
-  setTimeout(addMeteors, Math.random()* 3000 + 1000);
+
+  if (Game.inProgress) {
+    setTimeout(addMeteors, Game.asteroidTimer);
+  }
 }
 
 function loadMeteor() {
@@ -40,7 +51,10 @@ function attack(time, mesh) {
     type: 'vector-move',
     opts: { stop: { y: 0, x: 0, z: 0, }, },
     duration: time,
-    callback: function(tar){SceneManager.scene.remove(tar)}
+    callback: function(tar){
+      loseLife();
+      SceneManager.scene.remove(tar);
+    }
   });
 }
 
@@ -96,4 +110,18 @@ function mapWith(paths) {
     specularMap: THREE.ImageUtils.loadTexture(paths.spec),
     specular: new THREE.Color(1.0, 1.0, 1.0),
   }
+}
+
+function loseLife() {
+  Game.playerLives -= 1;
+  console.log(Game.playerLives);
+
+  if (Game.playerLives === 0) {
+    endGame();
+    alert('game over, man!');
+  }
+}
+
+function endGame() {
+  Game.inProgress = false;
 }
