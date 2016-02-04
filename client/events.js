@@ -1,6 +1,7 @@
 Utils.events({
   'lookAt .asteroid': function(mesh) {
     SceneManager.scene.remove(mesh);
+    sound.roar.play();
     explosion(mesh);
   }
 });
