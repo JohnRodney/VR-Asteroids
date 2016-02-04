@@ -117,11 +117,25 @@ function loseLife() {
   console.log(Game.playerLives);
 
   if (Game.playerLives === 0) {
+    alert('game over!');
     endGame();
-    alert('game over, man!');
   }
 }
 
 function endGame() {
+
   Game.inProgress = false;
+
+}
+
+function clearObjectsFromScene() {
+
+  var temp = SceneManager.scene.children; 
+
+  for(i = 0; i < temp; i++){
+    let child = SceneManager.scene.children[i];
+      if(child.name == 'asteroid'){
+        SceneManager.scene.remove(child);
+      }
+  }
 }
