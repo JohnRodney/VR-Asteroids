@@ -2,7 +2,7 @@ Utils.events({
   'lookAt .asteroid': function(mesh) {
     SceneManager.scene.remove(mesh);
     explosion(mesh);
-    console.log('killed it!');
+    Game.playerScore += 10;
   }
 });
 

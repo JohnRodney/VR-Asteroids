@@ -16,15 +16,11 @@ function newGame() {
   Game.playerLives = 3;
   Game.playerScore = 0;
   Game.asteroidTimer = 8000;
-  Game.inProgress = true;
 }
 
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
-
-  if (Game.inProgress) {
-    setTimeout(addMeteors, Game.asteroidTimer);
-  }
+  Game.timeout = setTimeout(addMeteors, Game.asteroidTimer);
 }
 
 function loadMeteor() {
@@ -114,14 +110,26 @@ function mapWith(paths) {
 
 function loseLife() {
   Game.playerLives -= 1;
-  console.log(Game.playerLives);
 
   if (Game.playerLives === 0) {
     endGame();
-    alert('game over, man!');
+    alert('game over, man! you scored ' + Game.playerScore);
   }
 }
 
 function endGame() {
-  Game.inProgress = false;
+  clearTimeout(Game.timeout);
+  clearObjectsFromScene();
+}
+
+function clearObjectsFromScene() {
+  var SceneManagerClone = SceneManager.scene.children;
+
+  for (i = 0; i < SceneManagerClone.length; i++) {
+    var child = SceneManager.scene.children[i];
+
+    if (child.name === 'asteroid') {
+      SceneManager.scene.remove(child);
+    }
+  }
 }
