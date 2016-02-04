@@ -5,12 +5,23 @@ Utils.events({
   }
 });
 
+Utils.events({
+  'lookAt .start': function(mesh) {
+    moveText(mesh);
+  }
+});
+
 function getScaleMap() {
   return { 0: 0.07, 1: 0.07, 2: 0.07, 3: 0.07, 4: 0.22, 5: 0.50 };
 }
 
 function multiplyScale(mesh, index) {
   return getScaleMap()[index] * mesh.scale.x;
+}
+
+function moveText(mesh) {
+  mesh.position.x = 0;
+  mesh.position.y = 0;
 }
 
 function explosion(mesh) {

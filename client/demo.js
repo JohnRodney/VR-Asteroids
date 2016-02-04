@@ -4,12 +4,26 @@ Game.loaded = false;
 Template.scene.onRendered(function (){
   SceneManager.init();
   loadMeteor();
+  addMenu();
   addStarField();
   addCrossHair();
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
-  addMeteors();
+  // addMeteors();
 });
+
+function addMenu() {
+  var textShapes = THREE.FontUtils.generateShapes( 'START', {'font' : 'helvetiker','weight' : 'normal', 'style' : 'normal','size' : 10,'curveSegments' : 200} );
+  var text = new THREE.ShapeGeometry( textShapes );
+  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+  SceneManager.scene.add(textMesh);
+  textMesh.position.z = -100;
+  textMesh.position.x = 50;
+  textMesh.position.y = 50;
+
+  Game.textMesh = textMesh;
+  Game.textMesh.name = 'start';
+}
 
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
