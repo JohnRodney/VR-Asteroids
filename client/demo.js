@@ -9,7 +9,8 @@ Template.scene.onRendered(function (){
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   //addMeteors();
-  sound.background.play();
+  //sound.background.play();
+
 });
 
 function addMeteors() {
