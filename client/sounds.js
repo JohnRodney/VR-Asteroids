@@ -1,17 +1,26 @@
   //trigger boom
   sound = {};
-  sound.boom = new Howl({
-    urls: ['boom.mp3'],
+  sound.boomLarge = new Howl({
+    urls: ['sounds/bangLarge.wav'],
+    loop: false,
+    volume: 1
+  });
+  sound.boomMedium = new Howl({
+    urls: ['sounds/bangMedium.wav'],
+    loop: false,
+    volume: 1
+  });
+  sound.boomSmall = new Howl({
+    urls: ['sounds/bangSmall.wav'],
     loop: false,
     volume: 1
   });
   sound.bgMusic = new Howl({
-    urls: ['bgMusic_dynatron_stars.ogg'],
+    urls: ['sounds/bgMusic_dynatron_stars.ogg'],
     loop: true,
-    volume: 0.5
-  });
-  sound.bgMusic.play()
-
+    volume: 0.1,
+  }).play();
+  sound.fadeOut(0.1,0.001,1000);
   //white noise
   //audioContext = new webkitAudioContext();
   //frameCount = audioContext.sampleRate * 2.0;

@@ -3,7 +3,7 @@ Utils.events({
     var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
-    sound.boom.play();
+    sound.boomLarge.play();
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
     displayScore(position);
@@ -12,6 +12,11 @@ Utils.events({
     var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+    if(Math.random()<.5) {
+      sound.boomSmall.play();
+    } else {
+      sound.boomMedium.play();
+    }
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
     displayScore(position);
