@@ -39,7 +39,7 @@ function addCredits() {
     }
     SceneManager.scene.remove(Game.startSphere);
     addMenu();
-  }, 2000)
+  }, 4000)
 }
 
 function flashSphere() {
