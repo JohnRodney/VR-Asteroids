@@ -4,16 +4,17 @@ Game.loaded = false;
 Template.scene.onRendered(function (){
   SceneManager.init();
   loadMeteor();
-  addStarField();
+  //addStarField();
   addCrossHair();
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
-  addMeteors();
+  //addMeteors();
+  sound.background.play();
 });
 
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
-  setTimeout(addMeteors, Math.random()* 3000 + 1000);
+  setTimeout(addMeteors, .1 * 30000 + 1000);
 }
 
 function loadMeteor() {
@@ -41,15 +42,15 @@ function attack(time, mesh) {
     opts: { stop: { y: 0, x: 0, z: 0, }, },
     duration: time,
     callback: function(tar){SceneManager.scene.remove(tar)}
-  });
+});
 }
 
 function randomPosition() {
-  var pos = Math.random() * 400 - 200;
-  if(pos >= -50 || pos <= 50){
-    pos += 100;
-  }
-  return pos;
+var pos = Math.random() * 400 - 200;
+if(pos >= -50 || pos <= 50){
+  pos += 100;
+}
+return pos;
 }
 
 function copyRandomVector(target) {
