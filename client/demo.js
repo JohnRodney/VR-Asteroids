@@ -7,23 +7,43 @@ Template.scene.onRendered(function (){
   addMenu();
   addStarField();
   addCrossHair();
+
+  addSmallSphere();
+
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   // addMeteors();
   Utils.events({
     'lookAt .start': function(mesh) {
+      console.log(smallSphere);
       startCountDown(mesh);
-    }
-  });
-  Utils.events({
-    'lookAt .go': function(mesh) {
-      SceneManager.scene.remove(mesh);
-      // addMeteors();
+      changeOpacity(Game.smallSphere);
     }
   });
 });
+
+function changeOpacity(mesh) {
+  Utils.transition({
+    mesh: mesh,
+    type: 'fade-out',
+    duration: 5,
+    callback: function(tar){SceneManager.scene.remove(tar)},
+  });
+}
+
+function addSmallSphere() {
+  var geometry = new THREE.SphereGeometry( 180, 60, 40 );
+  geometry.applyMatrix( new THREE.Matrix4().makeScale( -2, 2, 2 ) );
+  smallSphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 1, transparent: true }));
+  SceneManager.scene.add(smallSphere);
+  Game.smallSphere = smallSphere;
+  Game.smallSphere.name = 'smallSphere';
+  return smallSphere;
+}
+
 function startCountDown(mesh) {
   SceneManager.scene.remove(mesh);
+  SceneManager.scene.remove(Game.leaderboard);
   countDown();
 }
 
@@ -32,60 +52,46 @@ function countDown() {
   setInterval(function() {
     counter--;
     if (counter >= 0) {
-      var mesh = createTextMesh(counter+1);
+      var mesh = createTextMesh(String(counter+1), {font: 'helvetiker', size : 30, height: 1}, {color: 0xff0000})
       setTimeout(function(){
         SceneManager.scene.remove(mesh);
       }, 1000)
     }
-    // Display 'counter' wherever you want to display it.
     if (counter === 0) {
+      
       addMeteors();
     }
-  }, 2000);
-}
-function createTextMesh(counter) {
-  var material = new THREE.MeshBasicMaterial({
-    color: 0xff0000
-  });
-  var textGeom = new THREE.TextGeometry( counter, {
-    font: 'helvetiker', // Must be lowercase!
-    size : 30,
-    height: 1
-  });
-  
-  var textMesh = new THREE.Mesh( textGeom, material );
-
-  SceneManager.scene.add( textMesh );
-  var camera = SceneManager.camera.getWorldDirection();
-  textMesh.position.z = camera.z*150;
-  textMesh.position.x = camera.x*150;
-  textMesh.position.y = camera.y*150;
-  textMesh.rotation.y = 100;
-  Game.textMesh = textMesh;
-  Game.textMesh.name = 'counter';
-  return textMesh;
+  }, 1000);
 }
 
 function addMenu() {
-  var material = new THREE.MeshBasicMaterial({
-    color: 0xdddddd
-  });
-  var textGeom = new THREE.TextGeometry( 'START', {
-    font: 'helvetiker', // Must be lowercase!
-    size : 10,
-    height: 1
-  });
-  
+  var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
+  var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
+}
+
+function createTextMesh(text, text_options, material_options, rotation, position) {
+  var material = new THREE.MeshBasicMaterial(material_options);
+  var textGeom = new THREE.TextGeometry(text, text_options);
   var textMesh = new THREE.Mesh( textGeom, material );
-
   SceneManager.scene.add( textMesh );
-  textMesh.position.z = -100;
-  textMesh.position.x = 20;
-  textMesh.position.y = 20;
-  textMesh.rotation.y = 150;
-
-  Game.textMesh = textMesh;
-  Game.textMesh.name = 'start';
+  if(position) {
+    textMesh.position.x = position.x;
+    textMesh.position.y = position.y;
+    textMesh.position.z = position.z;
+  }else {
+    var camera = SceneManager.camera.getWorldDirection();
+    textMesh.position.x = camera.x*150;
+    textMesh.position.y = camera.y*150;  
+    textMesh.position.z = camera.z*150;
+  }
+  if(rotation) {
+    textMesh.rotation.x = rotation.x;
+    textMesh.rotation.y = rotation.y;
+    textMesh.rotation.z = rotation.z;
+  }
+  Game[text.toLowerCase()] = textMesh;
+  Game[text.toLowerCase()].name = text.toLowerCase();
+  return textMesh;
 }
 
 function addMeteors() {
