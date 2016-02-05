@@ -8,6 +8,12 @@ Template.scene.onRendered(function (){
   addStarField();
   addCrossHair();
   createMiniMapObjects();
+  sound = {};
+  sound.bgMusic = new Howl({
+      urls: ['sounds/bgMusic_dynatron_stars.ogg'],
+      loop: true,
+      volume: .01,
+  }).play();
 
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
@@ -119,6 +125,12 @@ function saveToGame(geometry) {
 
 function addMeteor() {
   var newAsteroid = Game.asteroid.clone();
+  flyBy = new THREE.Audio( SceneManager.listener );
+  flyBy.load( 'sounds/asteroid_tone.mp3' );
+  flyBy.setRefDistance(4);
+  flyBy.autoplay = true;
+  flyBy.loop = true;
+  newAsteroid.add(flyBy);
   SceneManager.scene.add(newAsteroid);
   copyRandomVector(newAsteroid.position);
   attack(15, newAsteroid);
