@@ -17,9 +17,30 @@ Template.scene.onRendered(function (){
       startCountDown(mesh);
       changeOpacity(Game.startSphere);
       newGame();
+    },
+    'lookAt .credits': function(mesh) {
+      SceneManager.scene.remove(Game.start);
+      SceneManager.scene.remove(Game.leaderboard);
+      SceneManager.scene.remove(Game.credits);
+      addCredits();
     }
   });
 });
+
+function addCredits() {
+  var names = ["JR", "K", "N", "M", "A", "BS", "BJ", "C", "GinaMiller_Food"];
+  for(var i = 0; i < names.length; i++) {
+    var mesh = createTextMesh(names[i], {font: 'helvetiker', size : 10, height: 1}, {color: 0xffffff }, {x: 0, y: 0, z: 0}, {x: -i*20, y: i*20, z: -200});
+  }
+  setTimeout(function(){
+    for(var i = 0; i < names.length; i++) {
+      var credit = names[i].toLowerCase();
+      SceneManager.scene.remove(Game[credit]);
+    }
+    SceneManager.scene.remove(Game.startSphere);
+    addMenu();
+  }, 2000)
+}
 
 function flashSphere() {
   Utils.transition({
@@ -71,6 +92,7 @@ function addStartSphere() {
 function startCountDown(mesh) {
   SceneManager.scene.remove(mesh);
   SceneManager.scene.remove(Game.leaderboard);
+  SceneManager.scene.remove(Game.credits);
   countDown();
 }
 
@@ -94,6 +116,7 @@ function countDown() {
 function addMenu() {
   var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
   var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
+  var credits = createTextMesh('Credits', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 0, z: 0}, {x: -20, y: -10, z: -100});
   addStartSphere();
 }
 
