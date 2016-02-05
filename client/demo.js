@@ -20,7 +20,6 @@ function startGame(){
   SceneManager.init();
   loadMeteor();
   addMenu();
-  addLeaderboard();
   addStarField();
   addCrossHair();
   createMiniMapObjects();
@@ -110,6 +109,7 @@ function addMenu() {
   var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
   var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
   addStartSphere();
+  addLeaderboard();
 }
 
 function addLeaderboard(){
@@ -120,9 +120,10 @@ function addLeaderboard(){
 
   var name = ["Martin", "Khalid", "JR", "Noa", "Choung", "Byron", "Brian"];
 
+  var scores = Scores.find().fetch();
   for(var i = 0; i < scores.length; i++){
     console.log(name[i]);
-    var textShapes = THREE.FontUtils.generateShapes(name[i], {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
+    var textShapes = THREE.FontUtils.generateShapes(scores[i].name + ': ' + scores[i].score, {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
     var text = new THREE.ShapeGeometry( textShapes );
     var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true } ) ) ;
 
@@ -304,6 +305,7 @@ var trackCamera = function(reticle) {
 function loseLife() {
   Game.playerLives -= 1;
   flashSphere();
+   console.log(Game.playerLives);
 
   if (Game.playerLives === 0) {
     endGame();
