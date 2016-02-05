@@ -3,6 +3,7 @@ Utils.events({
     var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+    sound.boom.play();
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
     displayScore(position);
