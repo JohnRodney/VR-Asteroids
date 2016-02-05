@@ -4,14 +4,95 @@ Game.loaded = false;
 Template.scene.onRendered(function (){
   SceneManager.init();
   loadMeteor();
+  addMenu();
   addStarField();
   addCrossHair();
   createMiniMapObjects();
+  addSmallSphere();
+
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   Utils.registerFunction(addMiniMap);
-  addMeteors();
+  Utils.events({
+    'lookAt .start': function(mesh) {
+      console.log(smallSphere);
+      startCountDown(mesh);
+      changeOpacity(Game.smallSphere);
+    }
+  });
 });
+
+function changeOpacity(mesh) {
+  Utils.transition({
+    mesh: mesh,
+    type: 'fade-out',
+    duration: 5,
+    callback: function(tar){SceneManager.scene.remove(tar)},
+  });
+}
+
+function addSmallSphere() {
+  var geometry = new THREE.SphereGeometry( 180, 60, 40 );
+  geometry.applyMatrix( new THREE.Matrix4().makeScale( -2, 2, 2 ) );
+  smallSphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 1, transparent: true }));
+  SceneManager.scene.add(smallSphere);
+  Game.smallSphere = smallSphere;
+  Game.smallSphere.name = 'smallSphere';
+  return smallSphere;
+}
+
+function startCountDown(mesh) {
+  SceneManager.scene.remove(mesh);
+  SceneManager.scene.remove(Game.leaderboard);
+  countDown();
+}
+
+function countDown() {
+  var counter = 3;
+  setInterval(function() {
+    counter--;
+    if (counter >= 0) {
+      var mesh = createTextMesh(String(counter+1), {font: 'helvetiker', size : 30, height: 1}, {color: 0xff0000})
+      setTimeout(function(){
+        SceneManager.scene.remove(mesh);
+      }, 1000)
+    }
+    if (counter === 0) {
+
+      addMeteors();
+    }
+  }, 1000);
+}
+
+function addMenu() {
+  var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
+  var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
+}
+
+function createTextMesh(text, text_options, material_options, rotation, position) {
+  var material = new THREE.MeshBasicMaterial(material_options);
+  var textGeom = new THREE.TextGeometry(text, text_options);
+  var textMesh = new THREE.Mesh( textGeom, material );
+  SceneManager.scene.add( textMesh );
+  if(position) {
+    textMesh.position.x = position.x;
+    textMesh.position.y = position.y;
+    textMesh.position.z = position.z;
+  }else {
+    var camera = SceneManager.camera.getWorldDirection();
+    textMesh.position.x = camera.x*150;
+    textMesh.position.y = camera.y*150;
+    textMesh.position.z = camera.z*150;
+  }
+  if(rotation) {
+    textMesh.rotation.x = rotation.x;
+    textMesh.rotation.y = rotation.y;
+    textMesh.rotation.z = rotation.z;
+  }
+  Game[text.toLowerCase()] = textMesh;
+  Game[text.toLowerCase()].name = text.toLowerCase();
+  return textMesh;
+}
 
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
@@ -132,3 +213,15 @@ function mapWith(paths) {
     specular: new THREE.Color(1.0, 1.0, 1.0),
   }
 }
+
+var trackCamera = function(reticle) {
+  console.log('reticle & dir')
+  console.log(reticle)
+  var dir = camera.getWorldDirection()
+  console.log(dir)
+  reticle.position.x = reticleMagnitude * dir.x
+  reticle.position.y = reticleMagnitude * dir.y
+  reticle.position.z = reticleMagnitude * dir.z
+}
+
+
