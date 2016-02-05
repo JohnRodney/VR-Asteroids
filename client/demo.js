@@ -8,19 +8,36 @@ Template.scene.onRendered(function (){
   addStarField();
   addCrossHair();
   createMiniMapObjects();
-
+  addFlashSphere();
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   Utils.registerFunction(addMiniMap);
   Utils.events({
     'lookAt .start': function(mesh) {
-      console.log(smallSphere);
       startCountDown(mesh);
-      changeOpacity(Game.smallSphere);
+      changeOpacity(Game.startSphere);
       newGame();
     }
   });
 });
+
+function flashSphere() {
+  Utils.transition({
+    mesh: Game.flash,
+    type: 'fade',
+    opts: {stop: 0.5},
+    duration: 0.2,
+    callback: function(tar){
+      Utils.transition({
+        mesh: tar,
+        type: 'fade-out',
+        duration: 0.2,
+        callback: function(tar){},
+      });
+    },
+  });
+  
+}
 
 function changeOpacity(mesh) {
   Utils.transition({
@@ -31,14 +48,24 @@ function changeOpacity(mesh) {
   });
 }
 
-function addSmallSphere() {
-  var geometry = new THREE.SphereGeometry( 180, 60, 40 );
+function addFlashSphere() {
+  var geometry = new THREE.SphereGeometry( 180, 32, 32 );
   geometry.applyMatrix( new THREE.Matrix4().makeScale( -2, 2, 2 ) );
-  smallSphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 1, transparent: true }));
-  SceneManager.scene.add(smallSphere);
-  Game.smallSphere = smallSphere;
-  Game.smallSphere.name = 'smallSphere';
-  return smallSphere;
+  flash = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0, transparent: true }));
+  SceneManager.scene.add(flash);
+  Game.flash = flash;
+  Game.flash.name = 'flash';
+  return flash;
+}
+
+function addStartSphere() {
+  var geometry = new THREE.SphereGeometry( 180, 32, 32 );
+  geometry.applyMatrix( new THREE.Matrix4().makeScale( -2, 2, 2 ) );
+  startSphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 1, transparent: true }));
+  SceneManager.scene.add(startSphere);
+  Game.startSphere = startSphere;
+  Game.startSphere.name = 'startSphere';
+  return startSphere;
 }
 
 function startCountDown(mesh) {
@@ -67,7 +94,7 @@ function countDown() {
 function addMenu() {
   var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
   var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
-  addSmallSphere();
+  addStartSphere();
 }
 
 function createTextMesh(text, text_options, material_options, rotation, position) {
@@ -170,7 +197,7 @@ function followCamera(mesh) {
 }
 
 function addStarField() {
-  var geometry = new THREE.SphereGeometry( 200, 60, 40 );
+  var geometry = new THREE.SphereGeometry( 200, 32, 32 );
   geometry.applyMatrix( new THREE.Matrix4().makeScale( -2, 2, 2 ) );
   SceneManager.scene.add( new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('/space.jpg') })))
 }
@@ -238,7 +265,7 @@ var trackCamera = function(reticle) {
 
 function loseLife() {
   Game.playerLives -= 1;
-
+  flashSphere();
   if (Game.playerLives === 0) {
     endGame();
     addMenu();
@@ -251,13 +278,13 @@ function endGame() {
 }
 
 function clearObjectsFromScene() {
-  var SceneManagerClone = SceneManager.scene.children;
-
-  for (i = 0; i < SceneManagerClone.length; i++) {
+  for( var i = SceneManager.scene.children.length - 1; i >= 0; i--) {
     var child = SceneManager.scene.children[i];
-
-    if (child.name === 'asteroid') {
+    console.log(child.name);
+    if (child.name === 'asteroid' || child.name === 'miniasteroid') {
+      console.log('removing');
       SceneManager.scene.remove(child);
     }
   }
+  console.log(SceneManager.scene.children);
 }
