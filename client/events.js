@@ -6,6 +6,7 @@ Utils.events({
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
     displayScore(position);
+    sound.boom.play();
   },
   'lookAt .miniasteroid': function(mesh) {
     var position = mesh.position;
@@ -14,6 +15,7 @@ Utils.events({
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
     displayScore(position);
+    sound.boom.play();
   }
 
 });

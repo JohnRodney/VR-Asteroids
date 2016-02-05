@@ -140,11 +140,11 @@ function attack(time, mesh) {
 }
 
 function randomPosition() {
-  var pos = Math.random() * 400 - 200;
-  if(pos >= -50 || pos <= 50){
-    pos += 100;
-  }
-  return pos;
+var pos = Math.random() * 400 - 200;
+if(pos >= -50 || pos <= 50){
+  pos += 100;
+}
+return pos;
 }
 
 function copyRandomVector(target) {
