@@ -1,8 +1,10 @@
 Utils.events({
   'lookAt .asteroid': function(mesh) {
-    let position = mesh.position;
+    var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+    Game.comboTimer = Date.now();
+    if (Game.comboTimer)
     Game.playerScore += 10;
     displayScore(position);
   }
@@ -69,12 +71,26 @@ function positionCopy(target, source){
 }
 
 function displayScore(position) {
-  console.log(position); 
-  var textShapes = THREE.FontUtils.generateShapes( '+10', {'font' : 'helvetiker','weight' : 'normal', 'style' : 'normal','size' : 10,'curveSegments' : 300} );
+  var textShapes = THREE.FontUtils.generateShapes( '+10', {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
   var text = new THREE.ShapeGeometry( textShapes );
-  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000, transparent: true } ) ) ;
+
   textMesh.position.z = position.z;
   textMesh.position.x = position.x;
   textMesh.position.y = position.y;
+  textMesh.lookAt( SceneManager.camera.position );
+
   SceneManager.scene.add(textMesh);
+  fadeScore(textMesh);
+}
+
+function fadeScore(textMesh) {
+  Utils.transition({
+    mesh: textMesh,
+    type: 'fade-out',
+    duration: 1,
+    callback: function(textMesh){
+      destroyMesh(textMesh);
+    }
+  });
 }
