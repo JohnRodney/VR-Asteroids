@@ -1,8 +1,10 @@
 Utils.events({
   'lookAt .asteroid': function(mesh) {
+    let position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
-    console.log('killed it!');
+    Game.playerScore += 10;
+    displayScore(position);
   }
 });
 
@@ -64,4 +66,15 @@ function positionCopy(target, source){
   for(var prop in source.position){
     target.position[prop] = source.position[prop];
   }
+}
+
+function displayScore(position) {
+  console.log(position); 
+  var textShapes = THREE.FontUtils.generateShapes( '+10', {'font' : 'helvetiker','weight' : 'normal', 'style' : 'normal','size' : 10,'curveSegments' : 300} );
+  var text = new THREE.ShapeGeometry( textShapes );
+  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+  textMesh.position.z = position.z;
+  textMesh.position.x = position.x;
+  textMesh.position.y = position.y;
+  SceneManager.scene.add(textMesh);
 }
