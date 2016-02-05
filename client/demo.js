@@ -304,10 +304,16 @@ var trackCamera = function(reticle) {
 function loseLife() {
   Game.playerLives -= 1;
   flashSphere();
+
   if (Game.playerLives === 0) {
     endGame();
+    storeScore();
     addMenu();
   }
+}
+
+function storeScore() {
+  Scores.insert({ score: Game.playerScore, name: Game.playerName });
 }
 
 function endGame() {

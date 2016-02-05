@@ -21,3 +21,4 @@ insecure                # Allow all DB writes from clients (for prototyping)
 poetic:vrboiler-plate
 aldeed:simple-schema
 ovcharik:howler
+aldeed:collection2
