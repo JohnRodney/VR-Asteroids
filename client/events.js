@@ -4,6 +4,14 @@ Utils.events({
     explosion(mesh);
     sound.boom.play();
     setAndDisplayScore(mesh);
+    boomL = new THREE.Audio( SceneManager.listener );
+    boomL.load( 'sounds/bangLarge.wav' );
+    boomL.setRefDistance(200);
+    boomL.autoplay = true;
+    mesh.add(boomL);
+    Game.comboTimer = Date.now();
+    Game.playerScore += 10;
+    displayScore(position);
   },
 
   'lookAt .miniasteroid': function(mesh) {
@@ -11,6 +19,23 @@ Utils.events({
     SceneManager.scene.remove(mesh);
     explosion(mesh);
     setAndDisplayScore(mesh);
+    boomM = new THREE.Audio( SceneManager.listener );
+    boomM.load( 'sounds/bangMedium.wav' );
+    boomM.setRefDistance(200);
+    boomM.autoplay = true;
+
+    boomS = new THREE.Audio( SceneManager.listener );
+    boomS.load( 'sounds/bangSmall.wav' );
+    boomS.setRefDistance(200);
+    boomS.autoplay = true;
+    if(Math.random()<.5) {
+      mesh.add(boomM);
+    } else {
+      mesh.add(boomS);
+    }
+    Game.comboTimer = Date.now();
+    Game.playerScore += 10;
+    displayScore(position);
   }
 });
 
