@@ -4,13 +4,11 @@ Game.loaded = false;
 Template.scene.onRendered(function (){
   SceneManager.init();
   loadMeteor();
-  //addStarField();
+  addStarField();
   addCrossHair();
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
-  //addMeteors();
-  //sound.background.play();
-
+  addMeteors();
 });
 
 function addMeteors() {
