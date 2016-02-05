@@ -8,7 +8,6 @@ Template.scene.onRendered(function (){
   addStarField();
   addCrossHair();
   createMiniMapObjects();
-  addSmallSphere();
 
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
@@ -18,6 +17,7 @@ Template.scene.onRendered(function (){
       console.log(smallSphere);
       startCountDown(mesh);
       changeOpacity(Game.smallSphere);
+      newGame();
     }
   });
 });
@@ -67,6 +67,7 @@ function countDown() {
 function addMenu() {
   var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
   var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
+  addSmallSphere();
 }
 
 function createTextMesh(text, text_options, material_options, rotation, position) {
@@ -94,9 +95,15 @@ function createTextMesh(text, text_options, material_options, rotation, position
   return textMesh;
 }
 
+function newGame() {
+  Game.playerLives = 3;
+  Game.playerScore = 0;
+  Game.asteroidTimer = 8000;
+}
+
 function addMeteors() {
   if(Game.loaded){ addMeteor(); }
-  setTimeout(addMeteors, Math.random()* 3000 + 1000);
+  Game.timeout = setTimeout(addMeteors, Game.asteroidTimer);
 }
 
 function loadMeteor() {
@@ -123,7 +130,10 @@ function attack(time, mesh) {
     type: 'vector-move',
     opts: { stop: { y: 0, x: 0, z: 0, }, },
     duration: time,
-    callback: function(tar){SceneManager.scene.remove(tar)}
+    callback: function(tar){
+      loseLife();
+      SceneManager.scene.remove(tar);
+    }
   });
 }
 
@@ -224,4 +234,28 @@ var trackCamera = function(reticle) {
   reticle.position.z = reticleMagnitude * dir.z
 }
 
+function loseLife() {
+  Game.playerLives -= 1;
 
+  if (Game.playerLives === 0) {
+    endGame();
+    addMenu();
+  }
+}
+
+function endGame() {
+  clearTimeout(Game.timeout);
+  clearObjectsFromScene();
+}
+
+function clearObjectsFromScene() {
+  var SceneManagerClone = SceneManager.scene.children;
+
+  for (i = 0; i < SceneManagerClone.length; i++) {
+    var child = SceneManager.scene.children[i];
+
+    if (child.name === 'asteroid') {
+      SceneManager.scene.remove(child);
+    }
+  }
+}

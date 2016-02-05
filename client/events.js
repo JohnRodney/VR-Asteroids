@@ -1,11 +1,19 @@
 Utils.events({
   'lookAt .asteroid': function(mesh) {
+    var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+    Game.comboTimer = Date.now();
+    Game.playerScore += 10;
+    displayScore(position);
   },
   'lookAt .miniasteroid': function(mesh) {
+    var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+    Game.comboTimer = Date.now();
+    Game.playerScore += 10;
+    displayScore(position);
   }
 
 });
@@ -68,4 +76,29 @@ function positionCopy(target, source){
   for(var prop in source.position){
     target.position[prop] = source.position[prop];
   }
+}
+
+function displayScore(position) {
+  var textShapes = THREE.FontUtils.generateShapes( '+10', {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
+  var text = new THREE.ShapeGeometry( textShapes );
+  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000, transparent: true } ) ) ;
+
+  textMesh.position.z = position.z;
+  textMesh.position.x = position.x;
+  textMesh.position.y = position.y;
+  textMesh.lookAt( SceneManager.camera.position );
+
+  SceneManager.scene.add(textMesh);
+  fadeScore(textMesh);
+}
+
+function fadeScore(textMesh) {
+  Utils.transition({
+    mesh: textMesh,
+    type: 'fade-out',
+    duration: 1,
+    callback: function(textMesh){
+      destroyMesh(textMesh);
+    }
+  });
 }
