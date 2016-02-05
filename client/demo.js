@@ -5,10 +5,10 @@ Template.scene.onRendered(function (){
   SceneManager.init();
   loadMeteor();
   addMenu();
+  addLeaderboard();
   addStarField();
   addCrossHair();
   createMiniMapObjects();
-
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   Utils.registerFunction(addMiniMap);
@@ -68,6 +68,29 @@ function addMenu() {
   var start = createTextMesh('START', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: 150, z: 0}, {x: 30, y: 20, z: -100});
   var leaderboard = createTextMesh('LEADERBOARD', {font: 'helvetiker', size : 10, height: 1}, {color: 0xdddddd}, {x: 0, y: -150, z: 0}, {x: -80, y: -60, z: -100});
   addSmallSphere();
+}
+
+function addLeaderboard(){
+  console.log("attach leaderboard");
+  var x = (screen.width/2) - 40;
+  var y = -65;
+  var z = 0;
+
+  var name = ["Martin", "Khalid", "JR", "Noa", "Choung", "Byron", "Brian"];
+
+  for(var i = 0; i < scores.length; i++){
+    console.log(name[i]);
+    var textShapes = THREE.FontUtils.generateShapes(name[i], {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
+    var text = new THREE.ShapeGeometry( textShapes );
+    var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true } ) ) ;
+
+    textMesh.position.x = 0;
+    textMesh.position.y = y;
+    textMesh.position.z = -100;
+    textMesh.lookAt(SceneManager.camera.position);
+    SceneManager.scene.add(textMesh);
+    y-= 15;
+  }
 }
 
 function createTextMesh(text, text_options, material_options, rotation, position) {
