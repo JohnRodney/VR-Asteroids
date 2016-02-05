@@ -1,24 +1,17 @@
 Utils.events({
   'lookAt .asteroid': function(mesh) {
-    var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
     sound.boom.play();
-    Game.comboTimer = Date.now();
-    Game.playerScore += 10;
-    displayScore(position);
-    sound.boom.play();
+    setAndDisplayScore(mesh);
   },
+
   'lookAt .miniasteroid': function(mesh) {
     var position = mesh.position;
     SceneManager.scene.remove(mesh);
     explosion(mesh);
-    Game.comboTimer = Date.now();
-    Game.playerScore += 10;
-    displayScore(position);
-    sound.boom.play();
+    setAndDisplayScore(mesh);
   }
-
 });
 
 function getScaleMap() {
@@ -81,8 +74,21 @@ function positionCopy(target, source){
   }
 }
 
-function displayScore(position) {
-  var textShapes = THREE.FontUtils.generateShapes( '+10', {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
+function setAndDisplayScore(mesh) {
+  var position = mesh.position;
+  var baseScore = Math.floor(checkScale(mesh));
+  var multiplier = determineMultiplier();
+  var scoreMessage = baseScore;
+  var score = baseScore;
+
+  if (multiplier) {
+    scoreMessage = baseScore + ' X ' + multiplier;
+    score = baseScore * multiplier;
+  }
+
+  Game.playerScore += score;
+
+  var textShapes = THREE.FontUtils.generateShapes( scoreMessage, {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
   var text = new THREE.ShapeGeometry( textShapes );
   var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000, transparent: true } ) ) ;
 
@@ -93,6 +99,30 @@ function displayScore(position) {
 
   SceneManager.scene.add(textMesh);
   fadeScore(textMesh);
+}
+
+function checkScale(Mesh) {
+  return 10/Mesh.scale.x;
+}
+
+function determineMultiplier() {
+  if (!Game.lastDestroyedTime) {
+    Game.lastDestroyedTime = Date.now();
+
+    return false;
+  } else {
+    var diffTime = (Date.now() - Game.lastDestroyedTime)/1000;
+
+    if (diffTime > 1) {
+      return 2;
+    }
+
+    if (diffTime > 0.5) {
+      return 3;
+    }
+
+    return false;
+  }
 }
 
 function fadeScore(textMesh) {
