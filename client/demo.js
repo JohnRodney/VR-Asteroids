@@ -6,8 +6,10 @@ Template.scene.onRendered(function (){
   loadMeteor();
   addStarField();
   addCrossHair();
+  createMiniMapObjects();
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
+  Utils.registerFunction(addMiniMap);
   addMeteors();
 });
 
@@ -86,6 +88,39 @@ function addCrossHair() {
   Game.crosshair = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   SceneManager.scene.add(Game.crosshair);
   Game.crosshair.functionID = Utils.registerFunction(followCamera, Game.crosshair);
+}
+
+function createMiniMapObjects() {
+  var geometry = new THREE.CircleGeometry(8.00 , 64 );
+  geometry.vertices.shift();
+  Game.minimap = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 0}));
+  Game.minimap.name = 'minimap';
+  geometry = new THREE.SphereGeometry(0.02, 32, 32 );
+  material = new THREE.MeshPhongMaterial( {color: 0xff0000, transparent: true, opacity: .7} );
+  Game.minimapRedSphere = new THREE.Mesh( geometry, material );
+  geometry = new THREE.SphereGeometry(0.005, 32, 32 );
+  material = new THREE.MeshPhongMaterial( {color: 0x00ff00 , transparent: true, opacity: .7} );
+  Game.minimapGreenSphere = new THREE.Mesh( geometry, material );
+}
+
+function addMiniMap() {
+  SceneManager.scene.delete('minimap');
+  Game.minimap.children = [];
+  SceneManager.scene.children.forEach(function(mesh){
+    if (mesh.name === 'asteroid' || mesh.name === 'miniasteroid' || mesh.name === 'spawning') {
+      var sphere;
+      if(mesh.name === 'asteroid') {
+        sphere = Game.minimapRedSphere.clone();
+      } else {
+        sphere = Game.minimapGreenSphere.clone();
+      }
+      THREE.SceneUtils.attach (sphere, SceneManager.scene, Game.minimap);
+      sphere.position.x = mesh.position.x/200;
+      sphere.position.y = mesh.position.y/200;
+      sphere.position.z = mesh.position.z/200;
+    }
+  });
+  SceneManager.scene.add(Game.minimap);
 }
 
 function mapWith(paths) {

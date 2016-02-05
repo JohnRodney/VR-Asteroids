@@ -2,7 +2,12 @@ Utils.events({
   'lookAt .asteroid': function(mesh) {
     SceneManager.scene.remove(mesh);
     explosion(mesh);
+  },
+  'lookAt .miniasteroid': function(mesh) {
+    SceneManager.scene.remove(mesh);
+    explosion(mesh);
   }
+
 });
 
 function getScaleMap() {
@@ -25,7 +30,7 @@ function explosion(mesh) {
 function registerAsAsteroids(clones, delay) {
   setTimeout(function(){
     clones.forEach( function(clone){
-      clone.name = 'asteroid';
+      clone.name = 'miniasteroid';
     });
   }, delay);
 }
