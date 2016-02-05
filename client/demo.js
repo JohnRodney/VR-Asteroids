@@ -131,8 +131,10 @@ function attack(time, mesh) {
     opts: { stop: { y: 0, x: 0, z: 0, }, },
     duration: time,
     callback: function(tar){
-      loseLife();
-      SceneManager.scene.remove(tar);
+      if(SceneManager.scene.getObjectByProperty('uuid', tar.uuid)) {
+        loseLife();
+        SceneManager.scene.remove(tar);
+      }
     }
   });
 }
