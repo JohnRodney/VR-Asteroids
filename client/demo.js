@@ -10,16 +10,79 @@ Template.scene.onRendered(function (){
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   // addMeteors();
+  Utils.events({
+    'lookAt .start': function(mesh) {
+      startCountDown(mesh);
+    }
+  });
+  Utils.events({
+    'lookAt .go': function(mesh) {
+      SceneManager.scene.remove(mesh);
+      // addMeteors();
+    }
+  });
 });
+function startCountDown(mesh) {
+  SceneManager.scene.remove(mesh);
+  countDown();
+}
+
+function countDown() {
+  var counter = 3;
+  setInterval(function() {
+    counter--;
+    if (counter >= 0) {
+      var mesh = createTextMesh(counter+1);
+      setTimeout(function(){
+        SceneManager.scene.remove(mesh);
+      }, 1000)
+    }
+    // Display 'counter' wherever you want to display it.
+    if (counter === 0) {
+      addMeteors();
+    }
+  }, 2000);
+}
+function createTextMesh(counter) {
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xff0000
+  });
+  var textGeom = new THREE.TextGeometry( counter, {
+    font: 'helvetiker', // Must be lowercase!
+    size : 30,
+    height: 1
+  });
+  
+  var textMesh = new THREE.Mesh( textGeom, material );
+
+  SceneManager.scene.add( textMesh );
+  var camera = SceneManager.camera.getWorldDirection();
+  textMesh.position.z = camera.z*150;
+  textMesh.position.x = camera.x*150;
+  textMesh.position.y = camera.y*150;
+  textMesh.rotation.y = 100;
+  Game.textMesh = textMesh;
+  Game.textMesh.name = 'counter';
+  return textMesh;
+}
 
 function addMenu() {
-  var textShapes = THREE.FontUtils.generateShapes( 'START', {'font' : 'helvetiker','weight' : 'normal', 'style' : 'normal','size' : 10,'curveSegments' : 200} );
-  var text = new THREE.ShapeGeometry( textShapes );
-  var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
-  SceneManager.scene.add(textMesh);
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xdddddd
+  });
+  var textGeom = new THREE.TextGeometry( 'START', {
+    font: 'helvetiker', // Must be lowercase!
+    size : 10,
+    height: 1
+  });
+  
+  var textMesh = new THREE.Mesh( textGeom, material );
+
+  SceneManager.scene.add( textMesh );
   textMesh.position.z = -100;
-  textMesh.position.x = 50;
-  textMesh.position.y = 50;
+  textMesh.position.x = 20;
+  textMesh.position.y = 20;
+  textMesh.rotation.y = 150;
 
   Game.textMesh = textMesh;
   Game.textMesh.name = 'start';
@@ -111,3 +174,15 @@ function mapWith(paths) {
     specular: new THREE.Color(1.0, 1.0, 1.0),
   }
 }
+
+var trackCamera = function(reticle) {
+  console.log('reticle & dir')
+  console.log(reticle)
+  var dir = camera.getWorldDirection()
+  console.log(dir)
+  reticle.position.x = reticleMagnitude * dir.x
+  reticle.position.y = reticleMagnitude * dir.y
+  reticle.position.z = reticleMagnitude * dir.z
+}
+
+
