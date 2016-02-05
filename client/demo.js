@@ -1,7 +1,22 @@
 Game = {};
 Game.loaded = false;
+Session.set('name', false);
 
-Template.scene.onRendered(function (){
+Template.scene.helpers({
+  noName: function(){
+    return !Session.get('name');
+  }
+});
+
+Template.scene.events({
+  'click .submit-name': function(e){
+    Game.playerName = $('.name').val();
+    Session.set('name', true);
+    startGame();
+  }
+});
+
+function startGame(){
   SceneManager.init();
   loadMeteor();
   addMenu();
@@ -20,7 +35,7 @@ Template.scene.onRendered(function (){
       newGame();
     }
   });
-});
+}
 
 function changeOpacity(mesh) {
   Utils.transition({

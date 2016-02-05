@@ -2,10 +2,47 @@
   margin: 0;
   padding: 0;
   transition: 0.5s ease-in-out;
+  margin-bottom: 20px;
 }
 
 body, html{
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: black;
+}
+
+input{
+  display: block;
+  width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 20px;
+  border: 0;
+  box-sizing: border-box;
+  box-shadow: 0 0 2px #312c32;
+  padding: 10px;
+}
+
+button{
+  padding: 10px;
+  width: 150px;
+  background-color: #3fb0ac;
+  color: white;
+  font-size: 16px;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 0 2px #312c32;
+}
+
+.name-container{
+  width: 300px;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 20px;
+  background-color: #98dafc;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+  box-shadow: 0 0 10px white;
 }

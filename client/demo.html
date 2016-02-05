@@ -1,6 +1,7 @@
 <head>
   <!--<meta name="apple-mobile-web-app-capable" content="yes">-->
   <title>vrupdate</title>
+  <meta name="viewport" content="initial-scale=1">
 </head>
 
 <body>
@@ -8,4 +9,11 @@
 </body>
 
 <template name="scene">
+  {{#if noName}}
+    <div class='name-container'>
+      <h3>Enter your name</h3>
+      <input class='name' type='text'>
+      <button class='submit-name'>Get Started</button>
+    </div>
+  {{/if}}
 </template>
