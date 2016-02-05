@@ -51,7 +51,6 @@ function flashSphere() {
       });
     },
   });
-  
 }
 
 function changeOpacity(mesh) {
@@ -290,6 +289,7 @@ function loseLife() {
 function endGame() {
   clearTimeout(Game.timeout);
   clearObjectsFromScene();
+  Game.flash.opacity = 0;
 }
 
 function clearObjectsFromScene() {
