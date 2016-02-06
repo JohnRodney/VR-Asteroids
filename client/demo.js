@@ -1,6 +1,9 @@
 Game = {};
 Game.loaded = false;
 Session.set('name', false);
+Game.startCountDown = startCountDown;
+Game.changeOpacity = changeOpacity;
+Game.newGame = newGame;
 
 Template.scene.helpers({
   noName: function(){
@@ -34,13 +37,6 @@ function startGame(){
   Utils.animate( [SceneManager, Utils] );
   Utils.registerFunction(rotateAllAsteroids);
   Utils.registerFunction(addMiniMap);
-  Utils.events({
-    'lookAt .start': function(mesh) {
-      startCountDown(mesh);
-      changeOpacity(Game.startSphere);
-      newGame();
-    }
-  });
 }
 
 function flashSphere() {
@@ -120,26 +116,31 @@ function addMenu() {
 }
 
 function addLeaderboard(){
-  console.log("attach leaderboard");
   var x = (screen.width/2) - 40;
   var y = -65;
   var z = 0;
+  var scores = Scores.find({}, { sort: { 'score' : -1 }}).fetch();
 
-  var name = ["Martin", "Khalid", "JR", "Noa", "Choung", "Byron", "Brian"];
-
-  var scores = Scores.find().fetch();
   for(var i = 0; i < scores.length; i++){
-    console.log(name[i]);
     var textShapes = THREE.FontUtils.generateShapes(scores[i].name + ': ' + scores[i].score, {'font' : 'helvetiker', 'weight' : 'normal', 'style' : 'normal', 'size' : 6, 'curveSegments' : 300} );
     var text = new THREE.ShapeGeometry( textShapes );
     var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true } ) ) ;
-
+    textMesh.name = 'score';
     textMesh.position.x = 0;
     textMesh.position.y = y;
     textMesh.position.z = -100;
     textMesh.lookAt(SceneManager.camera.position);
     SceneManager.scene.add(textMesh);
     y-= 15;
+  }
+}
+
+function removeScores(){
+  for(var i = SceneManager.scene.children.length -1; i >= 0; i--){
+    var child = SceneManager.scene.children[i];
+    if(child.name === 'score'){
+      SceneManager.scene.remove(child);
+    }
   }
 }
 
@@ -172,6 +173,16 @@ function newGame() {
   Game.playerLives = 3;
   Game.playerScore = 0;
   Game.asteroidTimer = 8000;
+  removeAllByName('score');
+}
+
+function removeAllByName(name) {
+  for(var i = SceneManager.scene.children.length-1; i >= 0; i--){
+    var child = SceneManager.scene.children[i];
+    if(child.name === name){
+      SceneManager.scene.remove(child);
+    }
+  };
 }
 
 function addMeteors() {
@@ -305,20 +316,9 @@ function mapWith(paths) {
   }
 }
 
-var trackCamera = function(reticle) {
-  console.log('reticle & dir')
-  console.log(reticle)
-  var dir = camera.getWorldDirection()
-  console.log(dir)
-  reticle.position.x = reticleMagnitude * dir.x
-  reticle.position.y = reticleMagnitude * dir.y
-  reticle.position.z = reticleMagnitude * dir.z
-}
-
 function loseLife() {
   Game.playerLives -= 1;
   flashSphere();
-   console.log(Game.playerLives);
 
   if (Game.playerLives === 0) {
     endGame();
@@ -340,11 +340,8 @@ function endGame() {
 function clearObjectsFromScene() {
   for( var i = SceneManager.scene.children.length - 1; i >= 0; i--) {
     var child = SceneManager.scene.children[i];
-    console.log(child.name);
     if (child.name === 'asteroid' || child.name === 'miniasteroid') {
-      console.log('removing');
       SceneManager.scene.remove(child);
     }
   }
-  console.log(SceneManager.scene.children);
 }

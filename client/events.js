@@ -2,7 +2,6 @@ Utils.events({
   'lookAt .asteroid': function(mesh) {
     SceneManager.scene.remove(mesh);
     explosion(mesh);
-    sound.boom.play();
     setAndDisplayScore(mesh);
     boomL = new THREE.Audio( SceneManager.listener );
     boomL.load( 'sounds/bangLarge.wav' );
@@ -11,7 +10,6 @@ Utils.events({
     mesh.add(boomL);
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
-    displayScore(position);
   },
 
   'lookAt .miniasteroid': function(mesh) {
@@ -35,8 +33,12 @@ Utils.events({
     }
     Game.comboTimer = Date.now();
     Game.playerScore += 10;
-    displayScore(position);
-  }
+  },
+  'lookAt .start': function(mesh) {
+    Game.startCountDown(mesh);
+    Game.changeOpacity(Game.startSphere);
+    Game.newGame();
+  },
 });
 
 function getScaleMap() {
